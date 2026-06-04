@@ -57,7 +57,3 @@ The plugin registers a `waterr-ai` MCP server bridged from `https://waterr.ai/ba
 - **"No API key found"** at MCP startup: setup wasn't run yet, or the saved key file was deleted. Run `/waterr-ai:setup`.
 - **`npx` not found**: install Node.js ≥ 18.
 - **Slash commands don't appear**: run `/plugin` and confirm `waterr-ai` is enabled.
-
-## Local development
-
-The plugin is the folder itself. To test against your local CoreBackend, edit `.mcp.json` and change the URL to `http://127.0.0.1:3000/mcp`.
