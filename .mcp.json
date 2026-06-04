@@ -1,14 +1,8 @@
 {
   "mcpServers": {
     "waterr-ai": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://waterr.ai/backend/mcp",
-        "--header",
-        "Authorization: Bearer ${WATERR_API_KEY}"
-      ]
+      "command": "bash",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/run-mcp.sh"]
     }
   }
 }

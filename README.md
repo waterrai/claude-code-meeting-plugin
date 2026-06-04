@@ -4,23 +4,39 @@ Pulls your WaterrAI workspace into Claude Code: scenarios, meetings, and post-me
 
 ## Install
 
-```bash
-# 1. Set your API key (grab it from waterr.ai → Settings → API keys)
-export WATERR_API_KEY=wai_live_xxx
+Inside Claude Code:
 
-# 2. Add the marketplace + install the plugin (run inside Claude Code)
+```
 /plugin marketplace add waterrai/claude-code-meeting-plugin
 /plugin install waterr-ai@waterr-ai
+/waterr-ai:setup
 ```
 
-After install, restart Claude Code so the MCP server boots with your key in the environment.
+`/waterr-ai:setup` will:
+
+1. Walk you through generating an API key at https://waterr.ai/settings/api-keys
+2. Validate the key against the server (rejects typos / revoked keys)
+3. Save it to `~/.claude/plugins/data/waterr-ai/key` with `0600` perms
+
+Then **restart Claude Code** (Cmd-Q + reopen) so the MCP server boots with the key.
+
+### Alternative: env var (for power users / CI)
+
+If you'd rather skip the setup flow, export the key before launching Claude Code:
+
+```bash
+export WATERR_API_KEY=wai_live_xxx
+```
+
+The wrapper checks `WATERR_API_KEY` first, then falls back to the saved key file.
 
 ## What you get
 
 ### Slash commands
 
 | Command | What it does |
-|---|---|
+| --- | --- |
+| `/waterr-ai:setup` | One-time API key configuration (validates against the server) |
 | `/waterr-ai:list-scenarios` | List all scenarios in your workspace |
 | `/waterr-ai:get-scenario <id>` | Full scenario details |
 | `/waterr-ai:recent-meetings [limit]` | Recent meetings, most recent first |
@@ -37,7 +53,8 @@ The plugin registers a `waterr-ai` MCP server bridged from `https://waterr.ai/ba
 
 ## Troubleshooting
 
-- **"Missing Authorization header" / 401**: `WATERR_API_KEY` wasn't set when Claude Code launched. Set it in your shell rc and reopen.
+- **"Missing Authorization header" / 401**: Run `/waterr-ai:setup` to (re)save the key, then restart Claude Code.
+- **"No API key found"** at MCP startup: setup wasn't run yet, or the saved key file was deleted. Run `/waterr-ai:setup`.
 - **`npx` not found**: install Node.js ≥ 18.
 - **Slash commands don't appear**: run `/plugin` and confirm `waterr-ai` is enabled.
 
