@@ -1,0 +1,16 @@
+{
+  "name": "waterr-ai",
+  "description": "WaterrAI plugins for Claude Code",
+  "marketplaceVersion": "1",
+  "owner": {
+    "name": "Waterr",
+    "url": "https://waterr.ai"
+  },
+  "plugins": [
+    {
+      "name": "waterr-ai",
+      "source": "./",
+      "description": "Talk to your WaterrAI workspace from Claude Code — list scenarios, fetch meetings, pull post-meeting analyses, plus a meeting-coach subagent."
+    }
+  ]
+}

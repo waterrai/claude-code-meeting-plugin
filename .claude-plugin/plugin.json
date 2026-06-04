@@ -1,0 +1,13 @@
+{
+  "name": "waterr-ai",
+  "displayName": "Waterr AI",
+  "description": "Talk to your WaterrAI workspace from Claude Code — list scenarios, fetch meetings, pull post-meeting analyses. Wraps the WaterrAI MCP server with slash commands and a meeting-coach subagent.",
+  "author": {
+    "name": "Waterr",
+    "url": "https://waterr.ai"
+  },
+  "homepage": "https://waterr.ai",
+  "repository": "https://github.com/waterrai/claude-code-meeting-plugin",
+  "license": "UNLICENSED",
+  "keywords": ["waterr", "meetings", "ai", "mcp"]
+}
