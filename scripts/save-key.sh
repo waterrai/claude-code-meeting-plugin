@@ -28,17 +28,23 @@ case "$KEY" in
   *) echo "INVALID_SHAPE: key must start with wai_"; exit 1 ;;
 esac
 
-HTTP_CODE=$(curl -sS -o /tmp/waterr-setup-resp.$$ -w "%{http_code}" \
+# Response body lands in a 0600 temp file under the plugin data dir (never
+# world-readable /tmp — the response may echo account details).
+mkdir -p "$DATA_DIR" || { echo "WRITE_ERROR: cannot create $DATA_DIR"; exit 1; }
+umask 077
+RESP_FILE=$(mktemp "$DATA_DIR/.setup-resp.XXXXXX") || { echo "WRITE_ERROR: cannot create temp file"; exit 1; }
+trap 'rm -f "$RESP_FILE"' EXIT
+
+HTTP_CODE=$(curl -sS -o "$RESP_FILE" -w "%{http_code}" \
   -X POST "$URL" \
   -H "Authorization: Bearer $KEY" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   --max-time 10 \
   -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"waterr-setup","version":"1"}}}' \
-  2>/dev/null) || { echo "NETWORK_ERROR: could not reach $URL"; rm -f /tmp/waterr-setup-resp.$$; exit 1; }
+  2>/dev/null) || { echo "NETWORK_ERROR: could not reach $URL"; exit 1; }
 
-BODY=$(cat /tmp/waterr-setup-resp.$$ 2>/dev/null || echo "")
-rm -f /tmp/waterr-setup-resp.$$
+BODY=$(cat "$RESP_FILE" 2>/dev/null || echo "")
 
 case "$HTTP_CODE" in
   200)

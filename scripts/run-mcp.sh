@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# Wrapper invoked by .mcp.json. Resolves the WaterrAI API key from (in order):
+# Wrapper invoked by .mcp.json. Resolves the WaterrAI credential from (in order):
 #   1. $WATERR_API_KEY env var (legacy / power users)
 #   2. ${CLAUDE_PLUGIN_DATA:-$HOME/.claude/plugins/data/waterr-ai}/key (set by /waterr-ai:setup)
+#   3. No key at all → mcp-remote's native OAuth flow (discovery via
+#      WWW-Authenticate → browser consent at waterr.ai → PKCE token exchange).
 #
-# Then execs mcp-remote against the prod MCP endpoint with the bearer header.
+# With a key, execs mcp-remote with the bearer header; without one, OAuth.
 
 set -euo pipefail
 
@@ -17,12 +19,9 @@ if [ -z "$KEY" ] && [ -r "$KEY_FILE" ]; then
 fi
 
 if [ -z "$KEY" ]; then
-  cat >&2 <<EOF
-[waterr-ai] No API key found.
-  Run /waterr-ai:setup inside Claude Code, or:
-  export WATERR_API_KEY=wai_live_xxx
-EOF
-  exit 1
+  echo "[waterr-ai] No API key configured — using the OAuth sign-in flow." >&2
+  echo "[waterr-ai] (Prefer a key? Run /waterr-ai:setup or export WATERR_API_KEY.)" >&2
+  exec npx -y mcp-remote "$URL"
 fi
 
 exec npx -y mcp-remote "$URL" --header "Authorization: Bearer $KEY"
